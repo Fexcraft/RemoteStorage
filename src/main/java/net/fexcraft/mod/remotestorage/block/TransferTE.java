@@ -10,6 +10,8 @@ import net.minecraftforge.items.CapabilityItemHandler;
 
 public class TransferTE extends TileEntity {
 
+	public String auth, token, company;
+
 	public TransferTE(){}
 	
 	@Override
@@ -20,13 +22,17 @@ public class TransferTE extends TileEntity {
     @Override
     public void readFromNBT(NBTTagCompound compound){
         super.readFromNBT(compound);
-        //
+        if(compound.hasKey("auth")) auth = compound.getString("auth");
+        if(compound.hasKey("token")) token = compound.getString("token");
+        if(compound.hasKey("company")) company = compound.getString("company");
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound){
         super.writeToNBT(compound);
-        //
+        if(auth != null) compound.setString("auth", auth);
+        if(token != null) compound.setString("token", token);
+        if(company != null) compound.setString("company", company);
         return compound;
     }
 
