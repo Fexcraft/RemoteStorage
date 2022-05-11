@@ -31,7 +31,18 @@ public class Command extends CommandBase {
 		if(sender instanceof EntityPlayer == false) return;
 		EntityPlayer player = (EntityPlayer)sender;
 		//player.openGui(RemoteStorage.INSTANCE, 0, player.world, 0, 0, 0);
-		Print.chat(sender, "&0[ &6Remote Storage &0]");
+		Print.chat(sender, "&2== == == &0[ &6Remote Storage &0]");
+		if(args.length == 0){
+			Print.chat(sender, "/resto company");
+			Print.chat(sender, "/resto company create <name>");
+			Print.chat(sender, "/resto company add <player/uuid>");
+			Print.chat(sender, "/resto company remove <player/uuid>");
+			Print.chat(sender, "/resto company staff add <player/uuid>");
+			Print.chat(sender, "/resto company staff remove <player/uuid>");
+			Print.chat(sender, "/resto company rename");
+			Print.chat(sender, "/resto company leave");
+			return;
+		}
 	}
 
 }
