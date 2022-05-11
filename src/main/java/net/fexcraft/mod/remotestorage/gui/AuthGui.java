@@ -4,6 +4,7 @@ import net.fexcraft.lib.mc.gui.GenericGui;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.Side;
 
 public class AuthGui extends GenericGui<AuthContainer> {
 	
@@ -23,6 +24,7 @@ public class AuthGui extends GenericGui<AuthContainer> {
 				NBTTagCompound com = new NBTTagCompound();
 				com.setString("org", fields.get("org").getText());
 				com.setString("tok", fields.get("tok").getText());
+				container.send(Side.SERVER, com);
 				return true;
 			}
 		});
