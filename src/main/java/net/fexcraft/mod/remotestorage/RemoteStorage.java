@@ -1,5 +1,7 @@
 package net.fexcraft.mod.remotestorage;
 
+import java.io.File;
+
 import org.apache.logging.log4j.Logger;
 
 import net.fexcraft.lib.mc.registry.FCLRegistry;
@@ -11,6 +13,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
@@ -36,6 +39,8 @@ public class RemoteStorage {
         TOKEN = config.getString("token", "general", "00000", "Token of this minecraft server to interact with the storage server.");
         config.save();
         
+    	GroupManager.load(new File(event.getModConfigurationDirectory(), "/remotestorage_groups.json"));
+        
         FCLRegistry.newAutoRegistry(MODID); 
         GameRegistry.registerTileEntity(TransferTE.class, new ResourceLocation(MODID, "transfer"));
     }
@@ -43,6 +48,11 @@ public class RemoteStorage {
     @EventHandler
     public void init(FMLInitializationEvent event){
     	NetworkRegistry.INSTANCE.registerGuiHandler(this, new GuiHandler());
+    }
+    
+    @EventHandler
+    public void onStop(FMLServerStoppingEvent event){
+    	GroupManager.save();
     }
     
     public Logger getLogger(){
