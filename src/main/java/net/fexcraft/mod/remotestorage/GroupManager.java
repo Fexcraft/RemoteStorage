@@ -9,6 +9,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import net.fexcraft.lib.common.json.JsonUtil;
+import net.fexcraft.lib.common.math.Time;
 import net.minecraft.entity.player.EntityPlayer;
 
 public class GroupManager {
@@ -27,6 +28,9 @@ public class GroupManager {
 			if(grobj.has("staff")) grobj.get("staff").getAsJsonArray().forEach(elm -> group.staff.add(UUID.fromString(elm.getAsString())));
 			group.created = grobj.get("created").getAsLong();
 			group.creator = UUID.fromString(grobj.get("creator").getAsString());
+			group.manager = UUID.fromString(grobj.get("manager").getAsString());
+			group.name = grobj.get("name").getAsString();
+			group.key = grobj.get("key").getAsString();
 			groups.put(entry.getKey(), group);
 		});
 	}
@@ -34,7 +38,7 @@ public class GroupManager {
 	public static void save(){
 		JsonObject obj = new JsonObject();
 		obj.addProperty("format", 1);
-		obj.add("groups", new JsonArray());
+		obj.add("groups", new JsonObject());
 		for(Group group : groups.values()){
 			JsonObject grobj = new JsonObject();
 			if(group.members.size() > 0){
@@ -49,20 +53,30 @@ public class GroupManager {
 			}
 			grobj.addProperty("created", group.created);
 			grobj.addProperty("creator", group.creator.toString());
-			obj.get("groups").getAsJsonArray().add(grobj);
+			grobj.addProperty("manager", group.manager.toString());
+			grobj.addProperty("name", group.name);
+			obj.get("groups").getAsJsonObject().add(group.key, grobj);
 		}
 		JsonUtil.write(file, obj);
 	}
 	
 	public static class Group {
 		
-		public ArrayList<UUID> members = new ArrayList<>(), staff = new ArrayList<>();
-		private UUID creator;
+		public ArrayList<UUID> members = new ArrayList<>(), staff = new ArrayList<>(), invites = new ArrayList<>();
+		public UUID creator, manager;
 		public long created;
-		public String id;
+		public String name, key;
 		
 		public Group(String key){
-			this.id = key;
+			this.key = key;
+		}
+		
+		public Group(String name, UUID creator){
+			this.key = genKey();
+			this.name = name;
+			this.creator = creator;
+			this.created = Time.getDate();
+			this.manager = creator;
 		}
 		
 	}
@@ -73,6 +87,33 @@ public class GroupManager {
 			if(group.members.contains(uuid)) return group;
 		}
 		return null;
+	}
+
+	public static Group get(String key){
+		for(Group group : groups.values()){
+			if(group.key.equals(key)) return group;
+		}
+		return null;
+	}
+
+	public static String genKey(){
+		String str = UUID.randomUUID().toString().replace("-", "").substring(0, 8);
+		while(get(str) != null) str = UUID.randomUUID().toString().replace("-", "").substring(0, 8);
+		return str;
+	}
+
+	public static void register(String name, EntityPlayer player){
+		UUID uuid = player.getGameProfile().getId();
+		Group group = new Group(name, uuid);
+		groups.put(name, group);
+		group.members.add(uuid);
+		group.staff.add(uuid);
+		save();
+	}
+
+	public static void remove(Group group){
+		groups.remove(group.key);
+		save();
 	}
 
 }
