@@ -44,7 +44,7 @@ public class TransferBlock extends BlockContainer {
             player.openGui(RemoteStorage.INSTANCE, 0, world, pos.getX(), pos.getY(), pos.getZ());
             return true;
         }
-        if(tile.company.equals(group.id)){
+        if(tile.company.equals(group.key)){
             player.openGui(RemoteStorage.INSTANCE, 1, world, pos.getX(), pos.getY(), pos.getZ());
             return true;
         }
