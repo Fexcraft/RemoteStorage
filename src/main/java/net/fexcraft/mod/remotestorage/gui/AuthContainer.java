@@ -26,7 +26,7 @@ public class AuthContainer extends GenericContainer {
 		if(side.isServer()){
 			tile.auth = packet.getString("org");
 			tile.token = packet.getString("tok");
-			tile.company = group.id;
+			tile.company = group.key;
             player.openGui(RemoteStorage.INSTANCE, 1, player.world, tile.getPos().getX(), tile.getPos().getY(), tile.getPos().getZ());
 		}
 	}
